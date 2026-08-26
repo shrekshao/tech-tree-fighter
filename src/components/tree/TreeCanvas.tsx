@@ -159,55 +159,61 @@ function CanvasInner({ tab, accent, selectedNodeId, onSelectNode }: Props) {
     return out;
   }, [resolved, tree.nodes, tab.file, selectedNodeId, lang]);
 
-  const edges = useMemo<Edge[]>(
-    () =>
-      tree.links.map((l) => {
-        const active = selectedNodeId
-          ? l.from === selectedNodeId || l.to === selectedNodeId
-          : true;
-        const color = l.color ?? accent;
-        const labelText = l.label ? pickLocale(l.label, lang) : undefined;
-        return {
-          id: `${l.from}->${l.to}`,
-          source: l.from,
-          target: l.to,
-          type: "tech",
-          sourcePosition: Position.Bottom,
-          targetPosition: Position.Top,
-          data: { link: l } satisfies TechEdgeData,
-          style: {
-            stroke: color,
-            strokeWidth: active ? 1.6 : 1,
-            opacity: active ? 0.85 : 0.12,
-            strokeDasharray:
-              l.style === "dashed" ? "7 5" : l.style === "dotted" ? "2 5" : undefined,
-          },
-          markerEnd: { type: MarkerType.ArrowClosed, width: 15, height: 15, color },
-          markerStart: l.bidirectional
-            ? { type: MarkerType.ArrowClosed, width: 15, height: 15, color }
-            : undefined,
-          zIndex: active ? 5 : 0,
-          label: labelText,
-          labelShowBg: Boolean(labelText),
-          labelStyle: {
-            fill: "#6b7f94",
-            fontSize: 9,
-            fontFamily: '"Share Tech Mono", monospace',
-            letterSpacing: "0.08em",
-            textTransform: "uppercase",
-          },
-          labelBgStyle: {
-            fill: "#05080d",
-            fillOpacity: 0.92,
-            stroke: "#1b2a3a",
-            strokeWidth: 1,
-          },
-          labelBgPadding: [6, 2] as [number, number],
-          labelBgBorderRadius: 0,
-        };
-      }),
-    [tree.links, selectedNodeId, accent, lang],
-  );
+  const edges = useMemo<Edge[]>(() => {
+    // 每个源节点的出边序号,用于肘部下探错开,避免多边重叠
+    const outCount = new Map<string, number>();
+    for (const l of tree.links) {
+      outCount.set(l.from, (outCount.get(l.from) ?? 0) + 1);
+    }
+    const outIndex = new Map<string, number>();
+    return tree.links.map((l) => {
+      const i = outIndex.get(l.from) ?? 0;
+      outIndex.set(l.from, i + 1);
+      const active = selectedNodeId
+        ? l.from === selectedNodeId || l.to === selectedNodeId
+        : true;
+      const color = l.color ?? accent;
+      const labelText = l.label ? pickLocale(l.label, lang) : undefined;
+      return {
+        id: `${l.from}->${l.to}`,
+        source: l.from,
+        target: l.to,
+        type: "tech",
+        sourcePosition: Position.Bottom,
+        targetPosition: Position.Top,
+        data: { drop: 14 + i * 14 } satisfies TechEdgeData,
+        style: {
+          stroke: color,
+          strokeWidth: active ? 1.6 : 1,
+          opacity: active ? 0.85 : 0.12,
+          strokeDasharray:
+            l.style === "dashed" ? "7 5" : l.style === "dotted" ? "2 5" : undefined,
+        },
+        markerEnd: { type: MarkerType.ArrowClosed, width: 15, height: 15, color },
+        markerStart: l.bidirectional
+          ? { type: MarkerType.ArrowClosed, width: 15, height: 15, color }
+          : undefined,
+        zIndex: active ? 5 : 0,
+        label: labelText,
+        labelShowBg: Boolean(labelText),
+        labelStyle: {
+          fill: "#6b7f94",
+          fontSize: 9,
+          fontFamily: '"Share Tech Mono", monospace',
+          letterSpacing: "0.08em",
+          textTransform: "uppercase",
+        },
+        labelBgStyle: {
+          fill: "#05080d",
+          fillOpacity: 0.92,
+          stroke: "#1b2a3a",
+          strokeWidth: 1,
+        },
+        labelBgPadding: [6, 2] as [number, number],
+        labelBgBorderRadius: 0,
+      };
+    });
+  }, [tree.links, selectedNodeId, accent, lang]);
 
   return (
     <div className="h-full w-full">
@@ -222,8 +228,7 @@ function CanvasInner({ tab, accent, selectedNodeId, onSelectNode }: Props) {
         panOnDrag
         minZoom={0.15}
         maxZoom={4}
-        fitView
-        fitViewOptions={{ padding: 0.18 }}
+        defaultViewport={{ x: 0, y: 0, zoom: 1 }}
         proOptions={{ hideAttribution: true }}
         deleteKeyCode={null}
         nodesDraggable={false}
@@ -265,7 +270,7 @@ function CanvasInner({ tab, accent, selectedNodeId, onSelectNode }: Props) {
 }
 
 function ZoomControls() {
-  const { zoomIn, zoomOut, fitView } = useReactFlow();
+  const { zoomIn, zoomOut, setViewport } = useReactFlow();
   const { t } = useTranslation();
   return (
     <div className="absolute left-3 top-3 z-10 flex flex-col gap-1">
@@ -278,7 +283,7 @@ function ZoomControls() {
       <button
         className="hud-btn"
         title={t("tree.fit")}
-        onClick={() => fitView({ padding: 0.18, duration: 300 })}
+        onClick={() => setViewport({ x: 0, y: 0, zoom: 1 }, { duration: 300 })}
       >
         ⌂
       </button>

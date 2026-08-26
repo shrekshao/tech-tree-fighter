@@ -53,7 +53,7 @@ tree:
 
   defaultEdge:              # 可选:本树连线默认样式
     style: dashed           # solid | dashed | dotted
-    path: straight          # straight | smoothstep | bezier
+    path: straight          # 预留字段:当前渲染固定为直角折线
 
   nodes:
     - id: f-86              # 小写字母/数字/连字符

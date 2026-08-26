@@ -81,8 +81,9 @@ body {
 }
 
 /* ---------- 科技树卡片 ---------- */
+/* 不透明背景:连线若从卡片后方经过,不会透出 */
 .hud-card {
-  @apply border border-hud-line bg-hud-panel/95 transition-all duration-150;
+  @apply border border-hud-line bg-hud-panel transition-all duration-150;
 }
 .hud-card:hover {
   border-color: var(--color-accent);

@@ -11,6 +11,9 @@ import type { Band, L10n, TreeData } from "@/schema";
 export const CARD_W = 210;
 export const CARD_H = 158;
 
+/** 同列卡片防重叠的最小间距 */
+export const STACK_GAP = 14;
+
 /** 画布边距:左侧年份刻度区、顶部列标题区 */
 export const LEFT_MARGIN = 64;
 export const TOP_MARGIN = 96;
@@ -147,6 +150,44 @@ export function resolveTree(tree: TreeData): ResolvedTree {
     // none 轴兜底扩展画布
     if (contentWidth < x + CARD_W) contentWidth = x + CARD_W;
     if (contentHeight < y + CARD_H) contentHeight = y + CARD_H;
+  }
+
+  /* ---- 同列防重叠:位置过近时沿箭头方向(时间轴向下)推移 ---- */
+  // 统一按「视觉列索引」分组:语义节点用其列序号,pos 节点就近归入对应列
+  let xSpacing = 340;
+  if (axes.x.type === "category" || axes.x.type === "ordinal") {
+    xSpacing = axes.x.spacing;
+  }
+  const xIndexOf = (node: (typeof tree.nodes)[number], pos: ResolvedNodePos): number => {
+    if (node.x !== undefined) {
+      const idx = colIndex.get(node.x);
+      if (idx !== undefined) return idx;
+    }
+    return Math.round(pos.x / xSpacing);
+  };
+  const groups = new Map<number, { id: string; y: number }[]>();
+  for (const node of tree.nodes) {
+    const pos = nodePositions.get(node.id);
+    if (!pos) continue;
+    const key = xIndexOf(node, pos);
+    const arr = groups.get(key) ?? [];
+    arr.push({ id: node.id, y: pos.y });
+    groups.set(key, arr);
+  }
+  for (const arr of groups.values()) {
+    arr.sort((a, b) => a.y - b.y);
+    let prevBottom = -Infinity;
+    for (const item of arr) {
+      if (item.y < prevBottom + STACK_GAP) item.y = prevBottom + STACK_GAP;
+      prevBottom = item.y + CARD_H;
+    }
+    for (const item of arr) {
+      const pos = nodePositions.get(item.id);
+      if (pos) {
+        pos.y = item.y;
+        if (contentHeight < pos.y + CARD_H) contentHeight = pos.y + CARD_H;
+      }
+    }
   }
 
   return {
