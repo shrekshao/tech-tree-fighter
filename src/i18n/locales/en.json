@@ -1,0 +1,35 @@
+{
+  "app": {
+    "title": "TECH TREE",
+    "subtitle": "Interactive evolution timelines",
+    "localeSwitch": "中文",
+    "loading": "LOADING DATA…",
+    "errorTitle": "DATA LOAD ERROR"
+  },
+  "tree": {
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "fit": "Reset view",
+    "year": "YEAR"
+  },
+  "modal": {
+    "specs": "SPECIFICATIONS",
+    "sources": "SOURCES",
+    "related": "RELATED",
+    "successors": "SUCCESSORS",
+    "predecessors": "PREDECESSORS",
+    "close": "Close",
+    "noImage": "NO IMAGE",
+    "wikipedia": "Wikipedia"
+  },
+  "status": {
+    "active": "ACTIVE",
+    "retired": "RETIRED",
+    "prototype": "PROTOTYPE",
+    "cancelled": "CANCELLED"
+  },
+  "footer": {
+    "editData": "Correct this data on GitHub",
+    "dataSource": "Data sources"
+  }
+}

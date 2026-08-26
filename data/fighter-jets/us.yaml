@@ -1,0 +1,605 @@
+# 美国战斗机科技树 (1945–至今)
+# 图片由 scripts/fetch-images.mjs 从 Wikipedia/Wikimedia Commons 下载
+
+tree:
+  axes:
+    x:
+      type: category
+      categories:
+        - { id: air-superiority, label: { en: Air Superiority, zh: 空优 } }
+        - { id: interceptor, label: { en: Interceptor, zh: 截击 } }
+        - { id: multirole, label: { en: Multirole, zh: 多用途 } }
+        - { id: ground-attack, label: { en: Ground Attack, zh: 对地攻击 } }
+        - { id: carrier, label: { en: Carrier-based, zh: 舰载 } }
+      spacing: 340
+    y:
+      type: year
+      min: 1940
+      max: 2030
+      tick: 10
+      pixelsPerYear: 26
+
+  bands:
+    - { id: gen1, from: 1942, to: 1955, label: { en: Jet Gen 1, zh: 第一代喷气 }, color: "#4d9fff14" }
+    - { id: gen2, from: 1955, to: 1970, label: { en: Jet Gen 2, zh: 第二代喷气 }, color: "#4dd6ff10" }
+    - { id: gen3, from: 1970, to: 1990, label: { en: Jet Gen 3, zh: 第三代喷气 }, color: "#7cfc9e0e" }
+    - { id: gen4, from: 1990, to: 2010, label: { en: Jet Gen 4, zh: 第四代喷气 }, color: "#ffd1660e" }
+    - { id: gen5, from: 2010, to: 2030, label: { en: Jet Gen 5, zh: 第五代喷气 }, color: "#ff5c6c0e" }
+
+  defaultEdge:
+    style: dashed
+    path: straight
+
+  # YAML 锚点:复用常用 label(YAML 特性,非 schema 字段,解析后自动剥离)
+  defs:
+    first-flight: &first-flight { en: First flight, zh: 首飞 }
+    max-speed: &max-speed { en: Max speed, zh: 最大速度 }
+    produced: &produced { en: Produced, zh: 产量 }
+    manufacturer: &manufacturer { en: Manufacturer, zh: 制造商 }
+    credit: &credit { en: Wikimedia Commons, zh: 维基共享资源 }
+    role-fighter: &role-fighter { en: Fighter, zh: 战斗机 }
+    role-interceptor: &role-interceptor { en: Interceptor, zh: 截击机 }
+    role-multirole: &role-multirole { en: Multirole fighter, zh: 多用途战斗机 }
+    role-attack: &role-attack { en: Attack aircraft, zh: 攻击机 }
+    role-carrier: &role-carrier { en: Carrier fighter, zh: 舰载战斗机 }
+    lbl-successor: &lbl-successor { en: Successor, zh: 后继 }
+    lbl-derivative: &lbl-derivative { en: Derivative, zh: 改型 }
+    lbl-lineage: &lbl-lineage { en: Lineage, zh: 技术传承 }
+
+  nodes:
+    - id: p-80
+      x: air-superiority
+      y: 1945
+      year: 1945
+      label: { en: P-80 Shooting Star, zh: P-80 流星 }
+      role: *role-fighter
+      status: retired
+      wiki: Lockheed P-80 Shooting Star
+      image: assets/us/p-80.webp
+      imageCredit: *credit
+      summary:
+        en: America's first operational jet fighter, designed and flown in under 150 days.
+        zh: 美国第一种投入服役的喷气战斗机,从设计到首飞不到 150 天。
+      details:
+        specs:
+          - { label: *first-flight, value: "1944" }
+          - { label: *max-speed, value: "965 km/h" }
+          - { label: *produced, value: "1,715" }
+          - { label: *manufacturer, value: Lockheed }
+    - id: f-84
+      x: ground-attack
+      y: 1947
+      year: 1947
+      label: { en: F-84 Thunderjet, zh: F-84 雷电 }
+      role: *role-attack
+      status: retired
+      wiki: Republic F-84 Thunderjet
+      image: assets/us/f-84.webp
+      imageCredit: *credit
+      summary:
+        en: Straight-wing jet fighter-bomber, a workhorse of ground attack in Korea.
+        zh: 直翼喷气战斗轰炸机,朝鲜战争对地攻击的主力之一。
+      details:
+        specs:
+          - { label: *first-flight, value: "1946" }
+          - { label: *max-speed, value: "1,053 km/h" }
+          - { label: *produced, value: "7,524" }
+          - { label: *manufacturer, value: Republic }
+    - id: f-86
+      x: air-superiority
+      y: 1949
+      year: 1949
+      label: { en: F-86 Sabre, zh: F-86 佩刀 }
+      role: *role-fighter
+      status: retired
+      wiki: North American F-86 Sabre
+      image: assets/us/f-86.webp
+      imageCredit: *credit
+      summary:
+        en: America's first swept-wing jet fighter, dominant over MiG Alley in Korea.
+        zh: 美国第一种后掠翼喷气战斗机,朝鲜战争中「米格走廊」的空中霸主。
+      details:
+        specs:
+          - { label: *first-flight, value: "1947" }
+          - { label: *max-speed, value: "1,106 km/h" }
+          - { label: *produced, value: "9,860" }
+          - { label: *manufacturer, value: North American }
+    - id: f9f
+      x: carrier
+      y: 1949
+      year: 1949
+      label: { en: F9F Panther, zh: F9F 黑豹 }
+      role: *role-carrier
+      status: retired
+      wiki: Grumman F9F Panther
+      image: assets/us/f9f.webp
+      imageCredit: *credit
+      summary:
+        en: Grumman's first jet fighter, the US Navy's carrier mainstay over Korea.
+        zh: 格鲁曼第一种喷气战斗机,朝鲜战争中美国海军的甲板主力。
+      details:
+        specs:
+          - { label: *first-flight, value: "1947" }
+          - { label: *max-speed, value: "925 km/h" }
+          - { label: *produced, value: "1,385" }
+          - { label: *manufacturer, value: Grumman }
+    - id: f-94
+      x: interceptor
+      y: 1950
+      year: 1950
+      label: { en: F-94 Starfire, zh: F-94 星火 }
+      role: *role-interceptor
+      status: retired
+      wiki: Lockheed F-94 Starfire
+      image: assets/us/f-94.webp
+      imageCredit: *credit
+      summary:
+        en: All-weather interceptor derived from the T-33 trainer, with radar and rockets.
+        zh: T-33 教练机衍生的全天候截击机,配备雷达与火箭弹。
+      details:
+        specs:
+          - { label: *first-flight, value: "1949" }
+          - { label: *max-speed, value: "1,030 km/h" }
+          - { label: *produced, value: "855" }
+          - { label: *manufacturer, value: Lockheed }
+    - id: f-89
+      x: interceptor
+      y: 1951
+      year: 1951
+      label: { en: F-89 Scorpion, zh: F-89 蝎 }
+      role: *role-interceptor
+      status: retired
+      wiki: Northrop F-89 Scorpion
+      image: assets/us/f-89.webp
+      imageCredit: *credit
+      summary:
+        en: NORAD's interceptor workhorse, later armed with nuclear air-to-air rockets.
+        zh: 北美防空司令部的截击主力,后改装核空对空火箭。
+      details:
+        specs:
+          - { label: *first-flight, value: "1948" }
+          - { label: *max-speed, value: "1,024 km/h" }
+          - { label: *produced, value: "1,052" }
+          - { label: *manufacturer, value: Northrop }
+    - id: f-84f
+      x: ground-attack
+      y: 1954
+      year: 1954
+      label: { en: F-84F Thunderstreak, zh: F-84F 雷电冲 }
+      role: *role-attack
+      status: retired
+      wiki: Republic F-84F Thunderstreak
+      image: assets/us/f-84f.webp
+      imageCredit: *credit
+      summary:
+        en: Swept-wing rework of the F-84, later a tactical nuclear strike platform.
+        zh: F-84 的后掠翼改型,后成为战术核打击平台之一。
+      details:
+        specs:
+          - { label: *first-flight, value: "1950" }
+          - { label: *max-speed, value: "1,118 km/h" }
+          - { label: *produced, value: "3,428" }
+          - { label: *manufacturer, value: Republic }
+    - id: f-100
+      x: air-superiority
+      y: 1954
+      year: 1954
+      label: { en: F-100 Super Sabre, zh: F-100 超佩刀 }
+      role: *role-fighter
+      status: retired
+      wiki: North American F-100 Super Sabre
+      image: assets/us/f-100.webp
+      imageCredit: *credit
+      summary:
+        en: The first fighter to sustain supersonic speed in level flight, opening the Century Series.
+        zh: 世界第一种平飞超音速战斗机,「世纪系列」的开端。
+      details:
+        specs:
+          - { label: *first-flight, value: "1953" }
+          - { label: *max-speed, value: "1,390 km/h" }
+          - { label: *produced, value: "2,294" }
+          - { label: *manufacturer, value: North American }
+    - id: f-102
+      x: interceptor
+      y: 1956
+      year: 1956
+      label: { en: F-102 Delta Dagger, zh: F-102 三角剑 }
+      role: *role-interceptor
+      status: retired
+      wiki: Convair F-102 Delta Dagger
+      image: assets/us/f-102.webp
+      imageCredit: *credit
+      summary:
+        en: Convair's delta-wing interceptor, the first practical application of the area rule.
+        zh: 康维尔三角翼截击机,「面积律」首次实用化。
+      details:
+        specs:
+          - { label: *first-flight, value: "1953" }
+          - { label: *max-speed, value: "1,304 km/h" }
+          - { label: *produced, value: "1,000" }
+          - { label: *manufacturer, value: Convair }
+    - id: f-104
+      x: interceptor
+      y: 1958
+      year: 1958
+      label: { en: F-104 Starfighter, zh: F-104 星战士 }
+      role: *role-interceptor
+      status: retired
+      wiki: Lockheed F-104 Starfighter
+      image: assets/us/f-104.webp
+      imageCredit: *credit
+      summary:
+        en: '"The missile with a man in it" — a Mach-2 interceptor that equipped a dozen air forces.'
+        zh: 「有人驾驶的导弹」:极速截击设计,曾装备十余国空军。
+      details:
+        specs:
+          - { label: *first-flight, value: "1954" }
+          - { label: *max-speed, value: "Mach 2.0" }
+          - { label: *produced, value: "2,578" }
+          - { label: *manufacturer, value: Lockheed }
+    - id: a-4
+      x: ground-attack
+      y: 1956
+      year: 1956
+      label: { en: A-4 Skyhawk, zh: A-4 天鹰 }
+      role: *role-attack
+      status: retired
+      wiki: Douglas A-4 Skyhawk
+      image: assets/us/a-4.webp
+      imageCredit: *credit
+      summary:
+        en: Small, rugged carrier attack jet — the "Scooter" that did the heavy lifting over Vietnam.
+        zh: 轻巧耐用的小型舰载攻击机,越战中的「滑板车」。
+      details:
+        specs:
+          - { label: *first-flight, value: "1954" }
+          - { label: *max-speed, value: "1,083 km/h" }
+          - { label: *produced, value: "2,960" }
+          - { label: *manufacturer, value: Douglas }
+    - id: f-101
+      x: interceptor
+      y: 1957
+      year: 1957
+      label: { en: F-101 Voodoo, zh: F-101 巫毒 }
+      role: *role-interceptor
+      status: retired
+      wiki: McDonnell F-101 Voodoo
+      image: assets/us/f-101.webp
+      imageCredit: *credit
+      summary:
+        en: Twin-engine supersonic fighter and reconnaissance jet, one of the fastest of its day.
+        zh: 麦克唐纳双发超音速战斗/侦察机,当年最快的飞机之一。
+      details:
+        specs:
+          - { label: *first-flight, value: "1954" }
+          - { label: *max-speed, value: "Mach 1.72" }
+          - { label: *produced, value: "807" }
+          - { label: *manufacturer, value: McDonnell }
+    - id: f-8
+      x: carrier
+      y: 1957
+      year: 1957
+      label: { en: F-8 Crusader, zh: F-8 十字军 }
+      role: *role-carrier
+      status: retired
+      wiki: Vought F-8 Crusader
+      image: assets/us/f-8.webp
+      imageCredit: *credit
+      summary:
+        en: '"The last gunfighter" — variable-incidence wing and cannon armament on a carrier fighter.'
+        zh: 「最后的机炮战斗机」:可变迎角机翼,美国海军超音速主力。
+      details:
+        specs:
+          - { label: *first-flight, value: "1955" }
+          - { label: *max-speed, value: "Mach 1.8" }
+          - { label: *produced, value: "1,261" }
+          - { label: *manufacturer, value: Vought }
+    - id: f-105
+      x: ground-attack
+      y: 1958
+      year: 1958
+      label: { en: F-105 Thunderchief, zh: F-105 雷公 }
+      role: *role-attack
+      status: retired
+      wiki: Republic F-105 Thunderchief
+      image: assets/us/f-105.webp
+      imageCredit: *credit
+      summary:
+        en: The "Thud" — Vietnam's strike workhorse, flying the most dangerous low-level missions.
+        zh: 越战对地打击主力「雷公」,承担了最危险的低空突击任务。
+      details:
+        specs:
+          - { label: *first-flight, value: "1955" }
+          - { label: *max-speed, value: "Mach 2.1" }
+          - { label: *produced, value: "833" }
+          - { label: *manufacturer, value: Republic }
+    - id: f-106
+      x: interceptor
+      y: 1959
+      year: 1959
+      label: { en: F-106 Delta Dart, zh: F-106 三角标枪 }
+      role: *role-interceptor
+      status: retired
+      wiki: Convair F-106 Delta Dart
+      image: assets/us/f-106.webp
+      imageCredit: *credit
+      summary:
+        en: Major rework of the F-102 and the USAF's last dedicated interceptor.
+        zh: F-102 的重大改型,美国空军最后的专职截击机。
+      details:
+        specs:
+          - { label: *first-flight, value: "1956" }
+          - { label: *max-speed, value: "Mach 2.3" }
+          - { label: *produced, value: "342" }
+          - { label: *manufacturer, value: Convair }
+    - id: f-4
+      x: multirole
+      y: 1960
+      year: 1960
+      label: { en: F-4 Phantom II, zh: F-4 鬼怪 II }
+      role: *role-multirole
+      status: retired
+      wiki: McDonnell Douglas F-4 Phantom II
+      image: assets/us/f-4.webp
+      imageCredit: *credit
+      summary:
+        en: Twin-engine workhorse with over 5,000 built — the face of air power over Vietnam.
+        zh: 产量超五千的双发多用途战机,三代机的开端,越南上空无处不在。
+      details:
+        specs:
+          - { label: *first-flight, value: "1958" }
+          - { label: *max-speed, value: "Mach 2.23" }
+          - { label: *produced, value: "5,195" }
+          - { label: *manufacturer, value: "McDonnell Douglas" }
+    - id: f-5
+      x: multirole
+      y: 1962
+      year: 1962
+      label: { en: F-5 Freedom Fighter, zh: F-5 自由斗士 }
+      role: *role-multirole
+      status: retired
+      wiki: Northrop F-5
+      image: assets/us/f-5.webp
+      imageCredit: *credit
+      summary:
+        en: Cheap, reliable Northrop light fighter exported to more than 30 nations.
+        zh: 诺斯罗普轻型战机,廉价可靠,出口到三十余国。
+      details:
+        specs:
+          - { label: *first-flight, value: "1959" }
+          - { label: *max-speed, value: "Mach 1.6" }
+          - { label: *produced, value: "2,246" }
+          - { label: *manufacturer, value: Northrop }
+    - id: a-6
+      x: carrier
+      y: 1963
+      year: 1963
+      label: { en: A-6 Intruder, zh: A-6 入侵者 }
+      role: *role-carrier
+      status: retired
+      wiki: Grumman A-6 Intruder
+      image: assets/us/a-6.webp
+      imageCredit: *credit
+      summary:
+        en: All-weather heavy carrier attacker — the night bomber of Vietnam and Desert Storm.
+        zh: 全天候重型舰载攻击机,越战与海湾战争中的夜间轰炸之王。
+      details:
+        specs:
+          - { label: *first-flight, value: "1960" }
+          - { label: *max-speed, value: "1,040 km/h" }
+          - { label: *produced, value: "693" }
+          - { label: *manufacturer, value: Grumman }
+    - id: f-111
+      x: ground-attack
+      y: 1967
+      year: 1967
+      label: { en: F-111 Aardvark, zh: F-111 土豚 }
+      role: *role-attack
+      status: retired
+      wiki: General Dynamics F-111 Aardvark
+      image: assets/us/f-111.webp
+      imageCredit: *credit
+      summary:
+        en: Swing-wing supersonic strike aircraft built for terrain-following low-level penetration.
+        zh: 变后掠翼超音速战斗轰炸机,专为低空贴地突防而生。
+      details:
+        specs:
+          - { label: *first-flight, value: "1964" }
+          - { label: *max-speed, value: "Mach 2.5" }
+          - { label: *produced, value: "563" }
+          - { label: *manufacturer, value: "General Dynamics" }
+    - id: a-7
+      x: carrier
+      y: 1967
+      year: 1967
+      label: { en: A-7 Corsair II, zh: A-7 海盗 II }
+      role: *role-carrier
+      status: retired
+      wiki: LTV A-7 Corsair II
+      image: assets/us/a-7.webp
+      imageCredit: *credit
+      summary:
+        en: A-4's replacement with heavy payload — the Navy's "SLUF".
+        zh: 取代 A-4 的舰载攻击机,载弹量大,绰号「泥巴搬运工」。
+      details:
+        specs:
+          - { label: *first-flight, value: "1965" }
+          - { label: *max-speed, value: "1,111 km/h" }
+          - { label: *produced, value: "1,569" }
+          - { label: *manufacturer, value: LTV }
+    - id: f-14
+      x: carrier
+      y: 1974
+      year: 1974
+      label: { en: F-14 Tomcat, zh: F-14 雄猫 }
+      role: *role-carrier
+      status: retired
+      wiki: Grumman F-14 Tomcat
+      image: assets/us/f-14.webp
+      imageCredit: *credit
+      summary:
+        en: Swing-wing fleet defender with AIM-54 Phoenix — star of Top Gun.
+        zh: 变后掠翼重型舰载战斗机,远程截击 + AIM-54「不死鸟」,《壮志凌云》主角。
+      details:
+        specs:
+          - { label: *first-flight, value: "1970" }
+          - { label: *max-speed, value: "Mach 2.34" }
+          - { label: *produced, value: "712" }
+          - { label: *manufacturer, value: Grumman }
+    - id: f-15
+      x: air-superiority
+      y: 1976
+      year: 1976
+      label: { en: F-15 Eagle, zh: F-15 鹰 }
+      role: *role-fighter
+      status: active
+      wiki: McDonnell Douglas F-15 Eagle
+      image: assets/us/f-15.webp
+      imageCredit: *credit
+      summary:
+        en: '"Not a pound for air-to-ground" — the air superiority machine with a 104:0 record.'
+        zh: 「没有一磅用于对地」的制空权机器,空战战绩 104:0。
+      details:
+        specs:
+          - { label: *first-flight, value: "1972" }
+          - { label: *max-speed, value: "Mach 2.5" }
+          - { label: *produced, value: "1,600+" }
+          - { label: *manufacturer, value: "McDonnell Douglas" }
+    - id: f-16
+      x: multirole
+      y: 1978
+      year: 1978
+      label: { en: F-16 Fighting Falcon, zh: F-16 战隼 }
+      role: *role-multirole
+      status: active
+      wiki: General Dynamics F-16 Fighting Falcon
+      image: assets/us/f-16.webp
+      imageCredit: *credit
+      summary:
+        en: Fly-by-wire classic with a bubble canopy — the West's most widespread fighter.
+        zh: 电传飞控 + 边条翼的经典轻型战机,西方装备最广的战斗机。
+      details:
+        specs:
+          - { label: *first-flight, value: "1974" }
+          - { label: *max-speed, value: "Mach 2.05" }
+          - { label: *produced, value: "4,600+" }
+          - { label: *manufacturer, value: "General Dynamics" }
+    - id: f-117
+      x: ground-attack
+      y: 1983
+      year: 1983
+      label: { en: F-117 Nighthawk, zh: F-117 夜鹰 }
+      role: *role-attack
+      status: retired
+      wiki: Lockheed F-117 Nighthawk
+      image: assets/us/f-117.webp
+      imageCredit: *credit
+      summary:
+        en: The world's first operational stealth aircraft — the ghost over Baghdad.
+        zh: 世界第一种实用隐身战机,海湾战争夜袭巴格达的「幽灵」。
+      details:
+        specs:
+          - { label: *first-flight, value: "1981" }
+          - { label: *max-speed, value: "Mach 0.92" }
+          - { label: *produced, value: "64" }
+          - { label: *manufacturer, value: Lockheed }
+    - id: f-a-18
+      x: carrier
+      y: 1983
+      year: 1983
+      label: { en: F/A-18 Hornet, zh: F/A-18 大黄蜂 }
+      role: *role-carrier
+      status: active
+      wiki: McDonnell Douglas F/A-18 Hornet
+      image: assets/us/f-a-18.webp
+      imageCredit: *credit
+      summary:
+        en: Fighter and attack in one airframe — the Navy's multirole "Hornet".
+        zh: 战斗/攻击双职能一体的舰载多面手「大黄蜂」。
+      details:
+        specs:
+          - { label: *first-flight, value: "1978" }
+          - { label: *max-speed, value: "Mach 1.8" }
+          - { label: *produced, value: "1,480" }
+          - { label: *manufacturer, value: "McDonnell Douglas" }
+    - id: f-a-18ef
+      x: carrier
+      y: 1999
+      year: 1999
+      label: { en: F/A-18E/F Super Hornet, zh: F/A-18E/F 超级大黄蜂 }
+      role: *role-carrier
+      status: active
+      wiki: Boeing F/A-18E/F Super Hornet
+      image: assets/us/f-a-18ef.webp
+      imageCredit: *credit
+      summary:
+        en: The enlarged Hornet — today's backbone of US carrier decks.
+        zh: 大黄蜂的放大改型,今日美国航母甲板的中坚。
+      details:
+        specs:
+          - { label: *first-flight, value: "1995" }
+          - { label: *max-speed, value: "Mach 1.8" }
+          - { label: *produced, value: "608+" }
+          - { label: *manufacturer, value: Boeing }
+    - id: f-22
+      x: air-superiority
+      y: 2005
+      year: 2005
+      label: { en: F-22 Raptor, zh: F-22 猛禽 }
+      role: *role-fighter
+      status: active
+      wiki: Lockheed Martin F-22 Raptor
+      image: assets/us/f-22.webp
+      imageCredit: *credit
+      summary:
+        en: "The first 5th-generation fighter: stealth, supercruise and unmatched air dominance."
+        zh: 第一种五代机:隐身、超音速巡航与超机动,制空权天花板。
+      details:
+        specs:
+          - { label: *first-flight, value: "1997" }
+          - { label: *max-speed, value: "Mach 2.25" }
+          - { label: *produced, value: "195" }
+          - { label: *manufacturer, value: "Lockheed Martin" }
+    - id: f-35
+      x: multirole
+      y: 2015
+      year: 2015
+      label: { en: F-35 Lightning II, zh: F-35 闪电 II }
+      role: *role-multirole
+      status: active
+      wiki: Lockheed Martin F-35 Lightning II
+      image: assets/us/f-35.webp
+      imageCredit: *credit
+      summary:
+        en: The multinational 5th-gen strike fighter, in land-based and carrier variants.
+        zh: 多国联合研制的五代多用途战机,三种型别覆盖陆基与舰载。
+      details:
+        specs:
+          - { label: *first-flight, value: "2006" }
+          - { label: *max-speed, value: "Mach 1.6" }
+          - { label: *produced, value: "1,000+" }
+          - { label: *manufacturer, value: "Lockheed Martin" }
+
+  links:
+    - { from: p-80, to: f-84, style: solid, label: *lbl-successor }
+    - { from: p-80, to: f-86, style: solid, label: *lbl-successor }
+    - { from: p-80, to: f-94, style: dashed, label: *lbl-derivative }
+    - { from: f9f, to: f-8, style: solid, label: *lbl-successor }
+    - { from: f-86, to: f-100, style: solid, label: *lbl-successor }
+    - { from: f-100, to: f-104, style: dashed, label: { en: Century Series, zh: 世纪系列 } }
+    - { from: f-84, to: f-84f, style: solid, label: *lbl-derivative }
+    - { from: f-102, to: f-106, style: solid, label: *lbl-successor }
+    - { from: f-101, to: f-4, style: dashed, label: *lbl-lineage }
+    - { from: f-8, to: f-14, style: dashed, label: *lbl-lineage }
+    - { from: f-4, to: f-14, style: dashed, label: *lbl-successor }
+    - { from: f-4, to: f-15, style: dashed, label: *lbl-successor }
+    - { from: f-5, to: f-16, style: dashed, label: { en: Light fighter line, zh: 轻型战机接力 } }
+    - { from: f-105, to: f-111, style: dashed, label: *lbl-successor }
+    - { from: a-4, to: a-7, style: solid, label: *lbl-successor }
+    - { from: a-6, to: f-a-18ef, style: dashed, label: *lbl-successor }
+    - { from: f-14, to: f-a-18ef, style: solid, label: *lbl-successor }
+    - { from: f-a-18, to: f-a-18ef, style: solid, label: *lbl-derivative }
+    - { from: f-15, to: f-22, style: solid, label: *lbl-successor }
+    - { from: f-111, to: f-117, style: dashed, label: { en: Strike evolution, zh: 打击演进 } }
+    - { from: f-16, to: f-35, style: dashed, label: { en: Multirole line, zh: 多用途接力 } }
+    - { from: f-22, to: f-35, style: dashed, label: { en: 5th-gen family, zh: 五代家族 } }

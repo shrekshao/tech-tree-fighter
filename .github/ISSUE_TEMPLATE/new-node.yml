@@ -1,0 +1,27 @@
+name: 新机型 / 新节点请求
+description: 建议新增一个机型或节点
+title: "[新增] "
+labels: [enhancement]
+body:
+  - type: input
+    id: dataset
+    attributes:
+      label: 数据集
+      description: 例如 fighter-jets
+    validations:
+      required: true
+  - type: input
+    id: name
+    attributes:
+      label: 机型 / 节点名称
+    validations:
+      required: true
+  - type: textarea
+    id: info
+    attributes:
+      label: 基本信息
+      description: 列(x)、年份(y)、首飞时间、极速、产量、制造商、一句话简介(zh/en)
+  - type: input
+    id: source
+    attributes:
+      label: 来源链接

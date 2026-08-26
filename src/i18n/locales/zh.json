@@ -1,0 +1,35 @@
+{
+  "app": {
+    "title": "科技树",
+    "subtitle": "互动式技术演进时间线",
+    "localeSwitch": "EN",
+    "loading": "正在加载数据…",
+    "errorTitle": "数据加载错误"
+  },
+  "tree": {
+    "zoomIn": "放大",
+    "zoomOut": "缩小",
+    "fit": "复位视图",
+    "year": "年份"
+  },
+  "modal": {
+    "specs": "规格参数",
+    "sources": "资料来源",
+    "related": "关联机型",
+    "successors": "后继",
+    "predecessors": "前驱",
+    "close": "关闭",
+    "noImage": "暂无图像",
+    "wikipedia": "维基百科"
+  },
+  "status": {
+    "active": "现役",
+    "retired": "退役",
+    "prototype": "原型",
+    "cancelled": "已取消"
+  },
+  "footer": {
+    "editData": "在 GitHub 上修正数据",
+    "dataSource": "数据来源"
+  }
+}

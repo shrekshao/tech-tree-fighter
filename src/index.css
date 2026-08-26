@@ -1,0 +1,178 @@
+@import "tailwindcss";
+
+/* ---------- HUD 设计 tokens ---------- */
+@theme {
+  --color-hud-bg: #05080d;
+  --color-hud-panel: #0a1018;
+  --color-hud-line: #1b2a3a;
+  --color-hud-dim: #6b7f94;
+  --color-hud-text: #cfe3f2;
+  --color-hud-green: #7cfc9e;
+  --color-hud-amber: #ffb454;
+  --color-hud-red: #ff5c6c;
+  --color-accent: #4dd6ff;
+  --font-hud: "Share Tech Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --font-display: "Rajdhani", "Share Tech Mono", ui-sans-serif, sans-serif;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  @apply bg-hud-bg font-hud text-hud-text antialiased;
+  background-image: radial-gradient(ellipse at 50% -20%, rgba(77, 214, 255, 0.07), transparent 60%);
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-accent) 30%, transparent);
+}
+
+/* ---------- 扫描线叠层 ---------- */
+.scanlines::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(255, 255, 255, 0.022) 0 1px,
+    transparent 1px 3px
+  );
+}
+
+/* ---------- HUD 原语 ---------- */
+.hud-btn {
+  @apply flex h-8 w-8 items-center justify-center border border-hud-line bg-hud-panel/90 text-sm text-hud-text transition-colors;
+}
+.hud-btn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.hud-panel {
+  @apply border border-hud-line bg-hud-panel;
+  box-shadow:
+    0 0 24px rgba(77, 214, 255, 0.08),
+    inset 0 0 32px rgba(77, 214, 255, 0.02);
+}
+
+.status-chip {
+  @apply border bg-hud-bg/80 px-1 text-[8px] tracking-widest;
+}
+.status-active {
+  @apply border-hud-green/50 bg-hud-green/10 text-hud-green;
+}
+.status-retired {
+  @apply border-hud-line text-hud-dim;
+}
+.status-prototype {
+  @apply border-hud-amber/50 bg-hud-amber/10 text-hud-amber;
+}
+.status-cancelled {
+  @apply border-hud-red/50 bg-hud-red/10 text-hud-red;
+}
+
+.modal-heading {
+  @apply mb-2 border-b border-hud-line pb-1 text-[10px] uppercase tracking-[0.3em] text-hud-dim;
+}
+
+/* ---------- 科技树卡片 ---------- */
+.hud-card {
+  @apply border border-hud-line bg-hud-panel/95 transition-all duration-150;
+}
+.hud-card:hover {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--color-accent) 35%, transparent);
+}
+.hud-card[data-selected="true"] {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--color-accent) 50%, transparent);
+}
+
+/* ---------- 详情正文 markdown ---------- */
+.hud-markdown h1,
+.hud-markdown h2,
+.hud-markdown h3 {
+  @apply mb-2 mt-4 font-display text-sm uppercase tracking-widest text-accent first:mt-0;
+}
+.hud-markdown p {
+  @apply mb-2 text-[13px] leading-relaxed text-hud-text/85;
+}
+.hud-markdown ul {
+  @apply mb-2 list-disc space-y-1 pl-5 text-[13px] text-hud-text/85 marker:text-hud-dim;
+}
+.hud-markdown a {
+  @apply text-accent underline decoration-accent/40 underline-offset-2;
+}
+.hud-markdown strong {
+  @apply text-hud-text;
+}
+
+/* ---------- react-flow 定制 ---------- */
+.react-flow__pane {
+  cursor: grab;
+}
+.react-flow__pane.dragging {
+  cursor: grabbing;
+}
+.react-flow__node-techNode {
+  cursor: pointer;
+}
+.react-flow__attribution {
+  display: none;
+}
+.hud-minimap-node {
+  opacity: 0.9;
+}
+
+/* ---------- 动效 ---------- */
+@keyframes hud-flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  93% {
+    opacity: 0.55;
+  }
+  94% {
+    opacity: 1;
+  }
+  97% {
+    opacity: 0.75;
+  }
+  98% {
+    opacity: 1;
+  }
+}
+.animate-flicker {
+  animation: hud-flicker 7s infinite;
+}
+
+/* ---------- 滚动条 ---------- */
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: #1b2a3a;
+  border: 2px solid #05080d;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-flicker {
+    animation: none;
+  }
+  .scanlines::after {
+    display: none;
+  }
+}

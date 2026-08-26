@@ -1,0 +1,28 @@
+# 战斗机科技树 —— 数据集入口(meta + tabs)
+# 数据格式说明见 SCHEMA.md;修正数据请提 GitHub issue / PR
+
+schemaVersion: 1
+
+meta:
+  id: fighter-jets
+  title: { en: Fighter Jet Tech Trees, zh: 战斗机科技树 }
+  description:
+    en: The evolution of American, Soviet and Chinese fighter jets, 1945 to today.
+    zh: 美、苏、中三国战斗机 1945 年至今的演进科技树。
+  defaultLocale: zh
+  locales: [zh, en]
+  accent: "#4dd6ff"
+
+tabs:
+  - id: us
+    title: { en: United States, zh: 美国 }
+    accent: "#4d9fff"
+    tree: ./us.yaml
+  - id: ussr
+    title: { en: Soviet Union, zh: 苏联 }
+    accent: "#ff5c6c"
+    tree: ./ussr.yaml
+  - id: china
+    title: { en: China, zh: 中国 }
+    accent: "#ffd166"
+    tree: ./china.yaml

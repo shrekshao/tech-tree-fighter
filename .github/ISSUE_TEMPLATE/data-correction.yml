@@ -1,0 +1,36 @@
+name: 数据修正 Data Correction
+description: 报告科技树数据错误或提供修正内容
+title: "[数据修正] "
+labels: [data]
+body:
+  - type: input
+    id: dataset
+    attributes:
+      label: 数据集
+      description: 例如 fighter-jets
+    validations:
+      required: true
+  - type: input
+    id: node
+    attributes:
+      label: 涉及机型 / 节点 id
+      description: 例如 f-86、mig-21(可在详情弹窗左上角看到 id)
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: 错误内容
+      description: 当前数据哪里不对?
+    validations:
+      required: true
+  - type: textarea
+    id: fix
+    attributes:
+      label: 建议修正
+      description: 应改为什么?可粘贴整段 YAML
+  - type: input
+    id: source
+    attributes:
+      label: 来源链接
+      description: 修正依据(Wikipedia 条目、官方资料等)
