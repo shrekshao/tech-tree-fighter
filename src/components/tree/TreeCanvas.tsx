@@ -2,7 +2,6 @@ import { useMemo } from "react";
 import {
   Background,
   BackgroundVariant,
-  MarkerType,
   MiniMap,
   Position,
   ReactFlow,
@@ -184,15 +183,11 @@ function CanvasInner({ tab, accent, selectedNodeId, onSelectNode }: Props) {
         data: { drop: 14 + i * 14 } satisfies TechEdgeData,
         style: {
           stroke: color,
-          strokeWidth: active ? 1.6 : 1,
-          opacity: active ? 0.85 : 0.12,
+          strokeWidth: 1,
+          opacity: active ? 0.5 : 0.1,
           strokeDasharray:
             l.style === "dashed" ? "7 5" : l.style === "dotted" ? "2 5" : undefined,
         },
-        markerEnd: { type: MarkerType.ArrowClosed, width: 15, height: 15, color },
-        markerStart: l.bidirectional
-          ? { type: MarkerType.ArrowClosed, width: 15, height: 15, color }
-          : undefined,
         zIndex: active ? 5 : 0,
         label: labelText,
         labelShowBg: Boolean(labelText),
