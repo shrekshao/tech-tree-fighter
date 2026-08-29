@@ -20,11 +20,11 @@ tree:
       pixelsPerYear: 26
 
   bands:
-    - { id: gen1, from: 1942, to: 1955, label: { en: Jet Gen 1, zh: 第一代喷气 }, color: "#ff5c6c14" }
-    - { id: gen2, from: 1955, to: 1970, label: { en: Jet Gen 2, zh: 第二代喷气 }, color: "#ff5c6c10" }
-    - { id: gen3, from: 1970, to: 1990, label: { en: Jet Gen 3, zh: 第三代喷气 }, color: "#7cfc9e0e" }
-    - { id: gen4, from: 1990, to: 2010, label: { en: Jet Gen 4, zh: 第四代喷气 }, color: "#ffd1660e" }
-    - { id: gen5, from: 2010, to: 2030, label: { en: Jet Gen 5, zh: 第五代喷气 }, color: "#4dd6ff0e" }
+    - { id: gen1, from: 1942, to: 1955, label: { en: Jet Gen 1, zh: 第一代喷气 } }
+    - { id: gen2, from: 1955, to: 1970, label: { en: Jet Gen 2, zh: 第二代喷气 } }
+    - { id: gen3, from: 1970, to: 1990, label: { en: Jet Gen 3, zh: 第三代喷气 } }
+    - { id: gen4, from: 1990, to: 2010, label: { en: Jet Gen 4, zh: 第四代喷气 } }
+    - { id: gen5, from: 2010, to: 2030, label: { en: Jet Gen 5, zh: 第五代喷气 } }
 
   defaultEdge:
     style: dashed

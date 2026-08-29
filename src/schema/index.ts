@@ -100,7 +100,7 @@ export const Band = z.object({
   from: z.number(),
   to: z.number(),
   label: L10n.optional(),
-  /** 建议带 alpha 的颜色,如 "#4dd6ff14" */
+  /** 色带底色(建议带 alpha,如 "#4dd6ff14")。缺省时无底色,仅保留虚线分隔与标签 */
   color: z.string().optional(),
 });
 export type Band = z.infer<typeof Band>;

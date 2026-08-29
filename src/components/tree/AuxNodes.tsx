@@ -18,13 +18,13 @@ function BandNodeInner({ data }: NodeProps<BandNodeType>) {
     <div
       className="relative h-full w-full"
       style={{
-        backgroundColor: band.color ?? "var(--color-accent)",
-        borderColor: band.color ?? "var(--color-accent)",
+        backgroundColor: band.color ?? "transparent",
+        borderColor: band.color ?? "var(--color-hud-line)",
       }}
     >
       <div
         className="absolute inset-x-0 top-0 border-t border-dashed"
-        style={{ borderColor: band.color ?? "var(--color-accent)" }}
+        style={{ borderColor: band.color ?? "var(--color-hud-line)" }}
       />
       {band.label && (
         <div className="absolute left-2 top-1.5 text-[9px] uppercase tracking-[0.3em] text-hud-dim">
