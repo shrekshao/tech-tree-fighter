@@ -9,7 +9,7 @@ export function Header({ dataset }: { dataset?: LoadedDataset }) {
   return (
     <header className="flex items-center justify-between gap-4 border-b border-hud-line bg-hud-panel/60 px-4 py-2.5 backdrop-blur">
       <div className="flex min-w-0 items-baseline gap-3">
-        <h1 className="animate-flicker font-display text-lg font-bold tracking-[0.3em] text-accent">
+        <h1 className="font-display text-lg font-bold tracking-[0.3em] text-accent">
           {t("app.title").toUpperCase()}
         </h1>
         {dataset && (

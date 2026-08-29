@@ -52,6 +52,15 @@ body {
   border-color: var(--color-accent);
   color: var(--color-accent);
 }
+/* 语言切换按钮:默认淡色,选中态高亮(同 status-* 惯例) */
+.locale-btn {
+  color: var(--color-hud-dim);
+}
+.locale-btn-active {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+}
 
 .hud-panel {
   @apply border border-hud-line bg-hud-panel;
@@ -130,32 +139,6 @@ body {
   opacity: 0.9;
 }
 
-/* ---------- 动效 ---------- */
-@keyframes hud-flicker {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  92% {
-    opacity: 1;
-  }
-  93% {
-    opacity: 0.55;
-  }
-  94% {
-    opacity: 1;
-  }
-  97% {
-    opacity: 0.75;
-  }
-  98% {
-    opacity: 1;
-  }
-}
-.animate-flicker {
-  animation: hud-flicker 7s infinite;
-}
-
 /* ---------- 滚动条 ---------- */
 *::-webkit-scrollbar {
   width: 8px;
@@ -170,9 +153,6 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-flicker {
-    animation: none;
-  }
   .scanlines::after {
     display: none;
   }
