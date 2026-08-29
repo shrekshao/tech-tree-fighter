@@ -4,6 +4,8 @@ import { CARD_H } from "@/data/resolve";
 export interface TechEdgeData extends Record<string, unknown> {
   /** 水平段相对源节点底部的下探距离(TreeCanvas 按出边序号错开) */
   drop: number;
+  /** 编辑模式:加宽命中区域、选中态高亮 */
+  editable?: boolean;
 }
 
 /**
@@ -23,8 +25,11 @@ export function TechEdge({
   targetY,
   data,
   style,
+  selected,
 }: EdgeProps) {
-  const drop = (data as TechEdgeData | undefined)?.drop ?? 14;
+  const edgeData = data as TechEdgeData | undefined;
+  const drop = edgeData?.drop ?? 14;
+  const editable = edgeData?.editable ?? false;
   const elbowY = sourceY + drop;
 
   let d: string;
@@ -40,5 +45,12 @@ export function TechEdge({
     d = `M ${sourceX},${sourceY} L ${sourceX},${bottomY} L ${targetX},${bottomY} L ${targetX},${targetY + CARD_H}`;
   }
 
-  return <BaseEdge id={id} path={d} style={style} />;
+  return (
+    <BaseEdge
+      id={id}
+      path={d}
+      style={selected ? { ...style, strokeWidth: 2, opacity: 1 } : style}
+      interactionWidth={editable ? 24 : 0}
+    />
+  );
 }

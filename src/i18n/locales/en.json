@@ -12,6 +12,19 @@
     "fit": "Reset view",
     "year": "YEAR"
   },
+  "edit": {
+    "toggle": "EDIT",
+    "exit": "EXIT EDIT",
+    "serialize": "SERIALIZE",
+    "serialized": "SERIALIZED",
+    "load": "LOAD YAML",
+    "loaded": "LOADED",
+    "loadFailed": "LOAD FAILED",
+    "hint": "DRAG CARDS (SNAPS TO COLUMN/YEAR) · CONNECT HANDLES · DEL REMOVES EDGE",
+    "edge": "EDGE",
+    "remove": "REMOVE",
+    "style": { "solid": "SOLID", "dashed": "DASHED", "dotted": "DOTTED" }
+  },
   "modal": {
     "specs": "SPECIFICATIONS",
     "sources": "SOURCES",

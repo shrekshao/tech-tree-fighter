@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { resolveTree, CARD_W, CARD_H, STACK_GAP } from "./resolve";
+import { resolveTree, snapNode, CARD_W, CARD_H, STACK_GAP } from "./resolve";
 import type { TreeData } from "@/schema";
 
 const mkTree = (overrides: Partial<TreeData> = {}): TreeData => ({
@@ -97,6 +97,70 @@ describe("resolveTree", () => {
         }),
       ),
     ).toThrow("不在列定义中");
+  });
+
+  describe("snapNode(编辑模式拖动吸附)", () => {
+    it("列中心 + 整年 → 语义坐标", () => {
+      const r = snapNode(mkTree(), "n1", { x: (340 - CARD_W) / 2, y: 5 * 20 });
+      expect(r).toEqual({ x: "a", y: 1945 });
+    });
+
+    it("阈值内的偏移吸附回语义坐标", () => {
+      // 列中心偏移 40px(阈值 340×20%=68),年份偏移 8px(半个刻度 10px 内)
+      const r = snapNode(mkTree(), "n1", {
+        x: (340 - CARD_W) / 2 + 40,
+        y: 5 * 20 + 8,
+      });
+      expect(r).toEqual({ x: "a", y: 1945 });
+    });
+
+    it("y 四舍五入到最近年份", () => {
+      const r = snapNode(mkTree(), "n1", { x: (340 - CARD_W) / 2, y: 110 });
+      expect(r).toEqual({ x: "a", y: 1946 });
+    });
+
+    it("跨列拖到第二列 → 语义坐标", () => {
+      const r = snapNode(mkTree(), "n1", { x: 340 + (340 - CARD_W) / 2, y: 10 * 20 });
+      expect(r).toEqual({ x: "b", y: 1950 });
+    });
+
+    it("落在列间隙(距离超阈值)→ pos 覆盖", () => {
+      const r = snapNode(mkTree(), "n1", { x: 300, y: 100 });
+      expect(r).toEqual({ pos: { x: 300, y: 100 } });
+    });
+
+    it("年份超出轴范围时夹在 [min, max]", () => {
+      const r = snapNode(mkTree(), "n1", { x: (340 - CARD_W) / 2, y: 999999 });
+      expect(r).toEqual({ x: "a", y: 2000 });
+    });
+
+    it("ordinal 轴吸附到层级", () => {
+      const tree = mkTree({
+        axes: {
+          x: { type: "ordinal", levels: [{ id: "l1", label: { en: "L1" } }], spacing: 220 },
+          y: {
+            type: "ordinal",
+            levels: [{ id: "f", label: { en: "F" } }, { id: "c", label: { en: "C" } }],
+            spacing: 200,
+          },
+        },
+      });
+      const r = snapNode(tree, "n1", { x: (220 - CARD_W) / 2, y: 200 });
+      expect(r).toEqual({ x: "l1", y: "c" });
+    });
+
+    it("none 轴不吸附,恒为 pos", () => {
+      const tree = mkTree({
+        axes: { x: { type: "none" }, y: { type: "none" } },
+      });
+      const r = snapNode(tree, "n1", { x: 123, y: 456 });
+      expect(r).toEqual({ pos: { x: 123, y: 456 } });
+    });
+
+    it("不存在的节点返回 pos", () => {
+      const r = snapNode(mkTree(), "ghost", { x: 10, y: 10 });
+      expect(r).toEqual({ pos: { x: 10, y: 10 } });
+    });
   });
 
   describe("防重叠(同列自动沿时间方向下推)", () => {

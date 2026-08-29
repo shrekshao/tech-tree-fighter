@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router";
 import { useTranslation } from "react-i18next";
 import type { CSSProperties } from "react";
 import { useUIStore } from "@/state/store";
+import { useEditStore } from "@/state/editStore";
 import { useDataset } from "@/data/loader";
 import { Header } from "@/components/layout/Header";
 import { TabBar } from "@/components/layout/TabBar";
@@ -23,6 +24,9 @@ export default function App() {
 
   const [params, setParams] = useSearchParams();
   const { data: dataset, error } = useDataset();
+  const editMode = useEditStore((s) => s.mode);
+  const editedTrees = useEditStore((s) => s.trees);
+  const setTree = useEditStore((s) => s.setTree);
 
   const tabs = dataset?.tabs ?? [];
   const requestedTab = params.get("tab");
@@ -30,8 +34,12 @@ export default function App() {
     ? (requestedTab as string)
     : tabs[0]?.id;
   const tab = tabs.find((t) => t.id === tabId);
+  // 编辑中树覆盖原始数据(拖卡片/改连线都写进这里)
+  const treeOverride = tabId ? editedTrees[tabId] : undefined;
+  const tabWithTree = tab && treeOverride ? { ...tab, tree: treeOverride } : tab;
   const nodeId = params.get("node");
-  const node = tab && nodeId ? tab.tree.nodes.find((n) => n.id === nodeId) : undefined;
+  const node =
+    tabWithTree && nodeId ? tabWithTree.tree.nodes.find((n) => n.id === nodeId) : undefined;
   const accent = tab?.accent ?? dataset?.meta.accent ?? DEFAULT_ACCENT;
 
   const openNode = (id: string) => {
@@ -74,22 +82,24 @@ export default function App() {
       <main className="relative min-h-0 flex-1">
         {error ? (
           <ErrorPanel message={error} />
-        ) : !tab ? (
+        ) : !tabWithTree ? (
           <div className="p-8 text-xs tracking-[0.3em] text-hud-dim">
             {t("app.loading")}
           </div>
         ) : (
           <TreeCanvas
-            key={tab.id}
-            tab={tab}
+            key={tabWithTree.id}
+            tab={tabWithTree}
             accent={accent}
             selectedNodeId={node?.id}
+            editMode={editMode}
+            onTreeChange={(tree) => setTree(tabWithTree.id, tree)}
             onSelectNode={openNode}
           />
         )}
       </main>
-      {node && tab && (
-        <NodeModal node={node} tab={tab} accent={accent} onSelect={openNode} onClose={closeNode} />
+      {node && tabWithTree && (
+        <NodeModal node={node} tab={tabWithTree} accent={accent} onSelect={openNode} onClose={closeNode} />
       )}
       <Footer />
     </div>

@@ -95,15 +95,23 @@ export interface LoadedDataset {
   tabs: LoadedTab[];
 }
 
+/**
+ * 解析并校验「单棵树文件」文本 → TreeData。
+ * 编辑模式的「加载 YAML」按钮与内置数据共用同一管线。
+ */
+export function parseTreeFileText(text: string, label: string): TreeData {
+  const parsed = parseYaml(text, label);
+  const result = TreeFile.safeParse(parsed);
+  if (!result.success) {
+    throw new DataError(`数据校验失败: ${label}\n${formatZodErrorText(result.error)}`);
+  }
+  return result.data.tree;
+}
+
 async function loadTreeFile(fromFile: string, ref: string): Promise<LoadedTab["tree"]> {
   const path = posixJoin(posixDirname(norm(fromFile)), ref);
   const text = await readDataFile(path);
-  const parsed = parseYaml(text, path);
-  const result = TreeFile.safeParse(parsed);
-  if (!result.success) {
-    throw new DataError(`数据校验失败: ${path}\n${formatZodErrorText(result.error)}`);
-  }
-  return result.data.tree;
+  return parseTreeFileText(text, path);
 }
 
 export async function loadDataset(id: string): Promise<LoadedDataset> {

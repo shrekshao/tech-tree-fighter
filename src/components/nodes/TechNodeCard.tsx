@@ -10,6 +10,8 @@ export interface TechNodeCardData extends Record<string, unknown> {
   node: NodeData;
   imageUrl?: string;
   selected: boolean;
+  /** 编辑模式:显示上下连接把手 */
+  editable: boolean;
 }
 
 export type TechNodeType = Node<TechNodeCardData, "techNode">;
@@ -29,7 +31,7 @@ function statusClass(status: NodeData["status"]): string {
 
 function TechNodeCardInner({ data }: NodeProps<TechNodeType>) {
   const { t, i18n } = useTranslation();
-  const { node, imageUrl, selected } = data;
+  const { node, imageUrl, selected, editable } = data;
   const lang = i18n.language;
   const displayYear = node.year ?? (typeof node.y === "number" ? node.y : null);
 
@@ -80,8 +82,22 @@ function TechNodeCardInner({ data }: NodeProps<TechNodeType>) {
         )}
       </div>
       <CornerFrame className="opacity-0 transition-opacity group-hover:opacity-100" />
-      <Handle type="source" position={Position.Bottom} className="!pointer-events-none !opacity-0" />
-      <Handle type="target" position={Position.Top} className="!pointer-events-none !opacity-0" />
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        className={cn(
+          "!h-2 !w-2 !rounded-none !border !border-accent !bg-hud-bg",
+          !editable && "!pointer-events-none !opacity-0",
+        )}
+      />
+      <Handle
+        type="target"
+        position={Position.Top}
+        className={cn(
+          "!h-2 !w-2 !rounded-none !border !border-accent !bg-hud-bg",
+          !editable && "!pointer-events-none !opacity-0",
+        )}
+      />
     </div>
   );
 }

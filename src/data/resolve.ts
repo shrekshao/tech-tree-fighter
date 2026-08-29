@@ -200,3 +200,69 @@ export function resolveTree(tree: TreeData): ResolvedTree {
     yearAxis,
   };
 }
+
+/* ---------- 编辑模式:拖动落点吸附 ---------- */
+
+/** 吸附到列中心的最大距离阈值(相对列宽的比例) */
+const SNAP_X_RATIO = 0.2;
+
+export interface SnapResult {
+  /** 吸附命中:语义坐标(调用方应清除 pos 覆盖) */
+  x?: string;
+  y?: number | string;
+  /** 未命中:像素覆盖(内容区坐标) */
+  pos?: ResolvedNodePos;
+}
+
+/**
+ * 编辑模式拖动落点解析:优先吸附语义坐标,落点在列间隙/无轴时才写 pos。
+ * 纯函数,与 resolveTree 同一坐标系(内容区像素),单元测试覆盖。
+ *
+ * 规则:
+ * - x:category/ordinal → 吸附最近列中心(距离 ≤ 列宽 × 20%)
+ * - y:year → 吸附最近年份(四舍五入,夹在 [min, max]);y:ordinal → 吸附最近层级
+ * - 两轴都吸附成功 → 返回语义坐标,保持数据人类可读
+ * - 任一轴未命中(none 轴或落在列间隙)→ 返回 pos 覆盖
+ */
+export function snapNode(
+  tree: TreeData,
+  nodeId: string,
+  pos: ResolvedNodePos,
+): SnapResult {
+  if (!tree.nodes.some((n) => n.id === nodeId)) return { pos };
+
+  const xAxis = tree.axes.x;
+  const yAxis = tree.axes.y;
+
+  let xSnapId: string | null = null;
+  if (xAxis.type === "category" || xAxis.type === "ordinal") {
+    const cols = xAxis.type === "category" ? xAxis.categories : xAxis.levels;
+    const centerX = pos.x + CARD_W / 2;
+    const idx = Math.round((centerX - xAxis.spacing / 2) / xAxis.spacing);
+    if (idx >= 0 && idx < cols.length) {
+      const targetX = idx * xAxis.spacing + (xAxis.spacing - CARD_W) / 2;
+      if (Math.abs(pos.x - targetX) <= xAxis.spacing * SNAP_X_RATIO) {
+        xSnapId = cols[idx].id;
+      }
+    }
+  }
+
+  let ySnap: { value: number | string } | null = null;
+  if (yAxis.type === "year") {
+    const year = Math.min(
+      yAxis.max,
+      Math.max(yAxis.min, yAxis.min + Math.round(pos.y / yAxis.pixelsPerYear)),
+    );
+    ySnap = { value: year };
+  } else if (yAxis.type === "ordinal") {
+    const idx = Math.round(pos.y / yAxis.spacing);
+    if (idx >= 0 && idx < yAxis.levels.length) {
+      ySnap = { value: yAxis.levels[idx].id };
+    }
+  }
+
+  if (xSnapId && ySnap) {
+    return { x: xSnapId, y: ySnap.value };
+  }
+  return { pos };
+}

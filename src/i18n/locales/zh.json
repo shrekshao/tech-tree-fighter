@@ -12,6 +12,19 @@
     "fit": "复位视图",
     "year": "年份"
   },
+  "edit": {
+    "toggle": "编辑",
+    "exit": "退出编辑",
+    "serialize": "导出 YAML",
+    "serialized": "已导出",
+    "load": "加载 YAML",
+    "loaded": "加载成功",
+    "loadFailed": "加载失败",
+    "hint": "拖动卡片(吸附列/年份) · 把手拖出连线 · DEL 删除连线",
+    "edge": "连线",
+    "remove": "删除",
+    "style": { "solid": "实线", "dashed": "虚线", "dotted": "点线" }
+  },
   "modal": {
     "specs": "规格参数",
     "sources": "资料来源",

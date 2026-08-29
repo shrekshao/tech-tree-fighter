@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Background,
   BackgroundVariant,
@@ -16,11 +16,13 @@ import { pickLocale } from "@/i18n";
 import { resolveAssetUrl, type LoadedTab } from "@/data/loader";
 import {
   resolveTree,
+  snapNode,
   CARD_W,
   CARD_H,
   LEFT_MARGIN,
   TOP_MARGIN,
 } from "@/data/resolve";
+import type { TreeData } from "@/schema";
 import { TechNodeCard, type TechNodeCardData } from "@/components/nodes/TechNodeCard";
 import {
   BandNode,
@@ -30,6 +32,7 @@ import {
   type AxisLabelData,
 } from "./AuxNodes";
 import { TechEdge, type TechEdgeData } from "./TechEdge";
+import { EditToolbar } from "./EditToolbar";
 
 const nodeTypes = {
   techNode: TechNodeCard,
@@ -43,6 +46,10 @@ interface Props {
   tab: LoadedTab;
   accent: string;
   selectedNodeId?: string;
+  /** 编辑模式:卡片可拖动、连线可增删改 */
+  editMode: boolean;
+  /** 编辑动作写回整棵树(拖卡片写 pos、增删连线) */
+  onTreeChange: (tree: TreeData) => void;
   onSelectNode: (id: string) => void;
 }
 
@@ -54,11 +61,17 @@ export function TreeCanvas(props: Props) {
   );
 }
 
-function CanvasInner({ tab, accent, selectedNodeId, onSelectNode }: Props) {
+function CanvasInner({ tab, accent, selectedNodeId, editMode, onTreeChange, onSelectNode }: Props) {
   const { t, i18n } = useTranslation();
   const lang = i18n.language;
   const tree = tab.tree;
   const resolved = useMemo(() => resolveTree(tree), [tree]);
+
+  // 编辑模式:当前选中(待调整/删除)的连线
+  const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
+  useEffect(() => {
+    if (!editMode) setSelectedEdgeId(null);
+  }, [editMode]);
 
   const nodes = useMemo<Node[]>(() => {
     const out: Node[] = [];
@@ -74,6 +87,7 @@ function CanvasInner({ tab, accent, selectedNodeId, onSelectNode }: Props) {
         data: { band: b.band, lang } satisfies BandNodeData,
         selectable: false,
         draggable: false,
+        deletable: false,
         zIndex: -3,
       });
     }
@@ -88,6 +102,7 @@ function CanvasInner({ tab, accent, selectedNodeId, onSelectNode }: Props) {
       data: { dir: "v" },
       selectable: false,
       draggable: false,
+      deletable: false,
       zIndex: -2,
     });
     out.push({
@@ -99,6 +114,7 @@ function CanvasInner({ tab, accent, selectedNodeId, onSelectNode }: Props) {
       data: { dir: "h" },
       selectable: false,
       draggable: false,
+      deletable: false,
       zIndex: -2,
     });
 
@@ -113,6 +129,7 @@ function CanvasInner({ tab, accent, selectedNodeId, onSelectNode }: Props) {
         data: { text: String(tick.year), align: "right", kind: "tick" } satisfies AxisLabelData,
         selectable: false,
         draggable: false,
+        deletable: false,
         zIndex: -2,
       });
     }
@@ -129,6 +146,7 @@ function CanvasInner({ tab, accent, selectedNodeId, onSelectNode }: Props) {
         data: { text: pickLocale(c.label, lang), align: "center", kind: "column" } satisfies AxisLabelData,
         selectable: false,
         draggable: false,
+        deletable: false,
         zIndex: -2,
       });
     }
@@ -148,17 +166,19 @@ function CanvasInner({ tab, accent, selectedNodeId, onSelectNode }: Props) {
           node: n,
           imageUrl: resolveAssetUrl(tab.file, n.image),
           selected: n.id === selectedNodeId,
+          editable: editMode,
         } satisfies TechNodeCardData,
         sourcePosition: Position.Bottom,
         targetPosition: Position.Top,
         selectable: true,
-        draggable: false,
-        connectable: false,
+        // draggable 缺省,跟随全局 nodesDraggable(仅编辑模式可拖)
+        connectable: editMode,
+        deletable: false,
         zIndex: n.id === selectedNodeId ? 10 : 0,
       });
     }
     return out;
-  }, [resolved, tree.nodes, tab.file, selectedNodeId, lang]);
+  }, [resolved, tree.nodes, tab.file, selectedNodeId, lang, editMode]);
 
   const edges = useMemo<Edge[]>(() => {
     // 每个源节点的出边序号,用于肘部下探错开,避免多边重叠
@@ -182,7 +202,7 @@ function CanvasInner({ tab, accent, selectedNodeId, onSelectNode }: Props) {
         type: "tech",
         sourcePosition: Position.Bottom,
         targetPosition: Position.Top,
-        data: { drop: 14 + i * 14 } satisfies TechEdgeData,
+        data: { drop: 14 + i * 14, editable: editMode } satisfies TechEdgeData,
         style: {
           stroke: color,
           strokeWidth: 1,
@@ -210,7 +230,7 @@ function CanvasInner({ tab, accent, selectedNodeId, onSelectNode }: Props) {
         labelBgBorderRadius: 0,
       };
     });
-  }, [tree.links, selectedNodeId, accent, lang]);
+  }, [tree.links, selectedNodeId, accent, lang, editMode]);
 
   return (
     <div className="h-full w-full">
@@ -227,11 +247,61 @@ function CanvasInner({ tab, accent, selectedNodeId, onSelectNode }: Props) {
         maxZoom={4}
         defaultViewport={{ x: 0, y: 0, zoom: 1 }}
         proOptions={{ hideAttribution: true }}
-        deleteKeyCode={null}
-        nodesDraggable={false}
-        nodesConnectable={false}
+        deleteKeyCode={editMode ? ["Delete", "Backspace"] : null}
+        nodesDraggable={editMode}
+        nodesConnectable={editMode}
+        elementsSelectable={editMode}
         onNodeClick={(_, node) => {
-          if (node.type === "techNode") onSelectNode(node.id);
+          if (node.type === "techNode" && !editMode) onSelectNode(node.id);
+        }}
+        onNodeDragStop={(_, node) => {
+          if (node.type !== "techNode") return;
+          // 流坐标 → 内容区像素坐标,优先吸附语义坐标;列间隙/无轴才写 pos
+          const snap = snapNode(tree, node.id, {
+            x: Math.round(node.position.x - LEFT_MARGIN),
+            y: Math.round(node.position.y - TOP_MARGIN),
+          });
+          onTreeChange({
+            ...tree,
+            nodes: tree.nodes.map((n) =>
+              n.id === node.id
+                ? snap.pos
+                  ? { ...n, pos: snap.pos }
+                  : { ...n, x: snap.x, y: snap.y, pos: undefined }
+                : n,
+            ),
+          });
+        }}
+        onConnect={(conn) => {
+          if (!conn.source || !conn.target || conn.source === conn.target) return;
+          if (tree.links.some((l) => l.from === conn.source && l.to === conn.target)) return;
+          onTreeChange({
+            ...tree,
+            links: [
+              ...tree.links,
+              {
+                from: conn.source,
+                to: conn.target,
+                style: tree.defaultEdge.style,
+                bidirectional: false,
+              },
+            ],
+          });
+        }}
+        onEdgeClick={(_, edge) => {
+          if (editMode) setSelectedEdgeId(edge.id);
+        }}
+        onPaneClick={() => setSelectedEdgeId(null)}
+        onDelete={({ edges }) => {
+          // v12 的 onDelete 无 preventDefault:RF 内部删除后立即写回数据,
+          // 否则下次受控重建时被删的连线会复活
+          if (!edges.length) return;
+          const ids = new Set(edges.map((e) => e.id));
+          onTreeChange({
+            ...tree,
+            links: tree.links.filter((l) => !ids.has(`${l.from}->${l.to}`)),
+          });
+          setSelectedEdgeId(null);
         }}
       >
         <Background
@@ -258,6 +328,12 @@ function CanvasInner({ tab, accent, selectedNodeId, onSelectNode }: Props) {
           style={{ borderRadius: 0 }}
         />
       </ReactFlow>
+      <EditToolbar
+        tab={tab}
+        selectedEdgeId={selectedEdgeId}
+        onTreeChange={onTreeChange}
+        onClearEdgeSelection={() => setSelectedEdgeId(null)}
+      />
       <ZoomControls />
       <span className="pointer-events-none absolute bottom-2 left-3 text-[9px] uppercase tracking-[0.3em] text-hud-dim/60">
         {t("tree.year")}
